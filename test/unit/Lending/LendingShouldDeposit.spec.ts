@@ -37,5 +37,16 @@ export const shouldDeposit = (): void => {
       assert(currentAccountToTokenDeposits.toBigInt() === previousAccountToTokenDeposits.add(amount).toBigInt(),'New value should equal previous + amount') // 3 '=' means that is going to compare type also
     });
 
+    // test: transferFrom function returns 'false'
+    it('should revert with transferFailed error', async function () {
+      // we need to mock transferFrom returning 'false' 
+      // to check coverage -> 'yarn coverage' on terminal
+      await this.mocks.mockUsdc.mock.transferFrom.returns(false);
+
+      const amount: BigNumber = parseEther('1');
+      
+      await expect(this.lending.connect(this.signers.alice).deposit(this.mocks.mockUsdc.address, amount)).to.be.revertedWith('TransferFailed');
+    
+    });
   });
 };
